@@ -12,11 +12,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
+
     }
 
-    public DbSet<Campgrounds> Campgrounds { get; set; }
-    public DbSet<CampgroundReviews> CampgroundReviews { get; set; }
-    public DbSet<CampgroundImages> CampgroundImages { get; set; }
+    public DbSet<Campground> Campgrounds { get; set; } = null!;
+    public DbSet<CampgroundReview> CampgroundReviews { get; set; } = null!;
+    public DbSet<CampgroundImage> CampgroundImages { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -32,10 +33,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            builder.Property(u => u.FirstName).HasMaxLength(255);
+            builder.Property(u => u.FirstName).HasMaxLength(256);
             builder.Property(u => u.FirstName).IsRequired(false);
 
-            builder.Property(u => u.LastName).HasMaxLength(255);
+            builder.Property(u => u.LastName).HasMaxLength(256);
             builder.Property(u => u.LastName).IsRequired(false);
         }
     }

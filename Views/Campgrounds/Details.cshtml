@@ -1,0 +1,112 @@
+﻿@model Yelpcamp.ViewModels.CampgroundViewModel
+@using Microsoft.AspNetCore.Identity
+@using Yelpcamp.ViewModels
+@inject UserManager<Yelpcamp.Areas.Identity.Data.ApplicationUser> userManager
+@{
+    ViewBag.Title = "Details - " + Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-6">
+        <div id="imageCarousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                @if (Model.CampgroundImages != null || Model.CampgroundImages.Count() != 0)
+                {
+                    @* @{bool firstImage = true;}*@
+                    @foreach (var image in Model.CampgroundImages)
+                    {
+                        @*string carouselTag = "carousel-item ";
+                        carouselTag = carouselTag + (firstImage ? "active" : "");
+                        firstImage = false;*@
+                        <div class="carousel-item active">
+                            <img src="@image.URL" class="d-block w-100" alt="">
+                        </div>
+                    }
+                    @*<% if(campground.images.length > 1) {%>
+                    <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                    <% } %> *@
+                } else {
+                    <div class="carousel-item active">
+                        <img src="/img/no-image-icon.png" class="d-block w-100" alt="">
+                    </div>
+                }
+                </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Title</h5>
+                <p class="card-text">@Model.Description</p>
+            </div>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item text-muted">Location: @Model.Location</li>
+            <li class="list-group-item">Author: @Model.AuthorUserName</li>
+            <li class="list-group-item">$@Model.Price/night</li>
+        </ul>
+        @if (userManager.GetUserId(User) == Model.AuthorUserId)
+        {
+            <div class="card-body">
+                <a asp-controller="Campgrounds" asp-action="Edit" asp-route-id="@Model.Id" class="card-link btn btn-info">Edit</a>
+                <a asp-controller="Campgrounds" asp-action="Delete" asp-route-id="@Model.Id" class="card-link btn btn-danger">Delete</a>
+            </div>
+        }
+    </div>
+    <div class="col-6">
+        @if(User != null && User.Identity.IsAuthenticated)
+        {
+            <h2>Leave a Review</h2>
+            <form asp-controller="CampgroundReviews" asp-action="Create" asp-route-id="@Model.Id" method="post" class="mb-3">
+                <div class="mb-3">
+                    <label class="form-label" for="rating">Rating</label>
+                    <input class="form-control" type="number" name="campgroundReview[rating]" id="rating" cols="5" required></input>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="body">Review Text</label>
+                    <textarea class="form-control" name="campgroundReview[body]" id="body" cols="30" rows="3" required></textarea>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <button class="btn btn-success">Submit</button>
+            </form>
+        }
+        else
+        {
+            <h2>Log In To Write a Review</h2>
+        }
+        @if (Model.CampgroundReviews != null)
+        {
+            @foreach (CampgroundReviewViewModel review in Model.CampgroundReviews)
+            {
+                <div class="card mb-3 ">
+                    <div class="card-body">
+                        <h5 class="card-title">@review.AuthorUserName</h5>
+                        <p> Rated: @review.Rating.ToString() stars</p>
+                        <!-- <h6 class="card-subtitle mb-2 text-muted"></h6> -->
+                        <p class="card-text">@review.Body</p>
+                        @if (userManager.GetUserId(User) == review.AuthorUserId)
+                        {
+                            <form asp-action="Delete" asp-controller="CampgroundReviews" asp-route-id="@review.Id">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,49 @@
+﻿@model Yelpcamp.ViewModels.CampgroundViewModel
+@{
+    ViewBag.Title = "Add New Campground";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <h1 class="text-center">Add New Campground</h1>
+    <div class="col-md-6 offset-md-3">
+        <form asp-controller="Campgrounds" asp-action="Create" method="POST"> @* enctype="multipart/form-data"> *@
+            @Html.ValidationSummary()
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Title)
+                @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Title)
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Description)
+                @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Description)
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Location)
+                @Html.TextBoxFor(m => m.Location, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Location)
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Price)
+                @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Price)
+            </div>
+            <div class="form-group mb-3">
+                @* <label for="MainImage" class="custom-file-upload">
+                    Primary Campground Image (Main Entrance or Pay Booth)
+                </label>
+                <input type="file" name="MainImage" id="MainImage" class="form-control" accept="image/*" /> *@
+                @Html.LabelFor(m => m.Image)
+                @Html.TextBoxFor(m => m.Image, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Image)
+            </div>
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

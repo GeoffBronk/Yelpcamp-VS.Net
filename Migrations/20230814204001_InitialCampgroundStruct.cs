@@ -4,7 +4,7 @@
 
 namespace Yelpcamp.Migrations
 {
-    public partial class InitialCampgroundData : Migration
+    public partial class InitialCampgroundStruct : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

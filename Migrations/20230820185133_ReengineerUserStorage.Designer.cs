@@ -12,8 +12,8 @@ using Yelpcamp.Areas.Identity.Data;
 namespace Yelpcamp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230814192706_InitialCampgroundData")]
-    partial class InitialCampgroundData
+    [Migration("20230820185133_ReengineerUserStorage")]
+    partial class ReengineerUserStorage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -181,12 +181,12 @@ namespace Yelpcamp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("LastName")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -234,13 +234,60 @@ namespace Yelpcamp.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Yelpcamp.Models.CampgroundImages", b =>
+            modelBuilder.Entity("Yelpcamp.Models.Campground", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AuthorUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AuthorUserName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Geometry")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Campgrounds");
+                });
+
+            modelBuilder.Entity("Yelpcamp.Models.CampgroundImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CampgroundId")
+                        .HasColumnType("int");
 
                     b.Property<int>("CampgroundsId")
                         .HasColumnType("int");
@@ -255,12 +302,12 @@ namespace Yelpcamp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CampgroundsId");
+                    b.HasIndex("CampgroundId");
 
                     b.ToTable("CampgroundImages");
                 });
 
-            modelBuilder.Entity("Yelpcamp.Models.CampgroundReviews", b =>
+            modelBuilder.Entity("Yelpcamp.Models.CampgroundReview", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -268,16 +315,22 @@ namespace Yelpcamp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("AuthorId")
+                    b.Property<string>("AuthorUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AuthorUserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CampgroundId")
+                        .HasColumnType("int");
 
                     b.Property<int>("CampgroundsId")
                         .HasColumnType("int");
@@ -287,48 +340,9 @@ namespace Yelpcamp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CampgroundsId");
+                    b.HasIndex("CampgroundId");
 
                     b.ToTable("CampgroundReviews");
-                });
-
-            modelBuilder.Entity("Yelpcamp.Models.Campgrounds", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AuthorId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Geometry")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.ToTable("Campgrounds");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -382,40 +396,21 @@ namespace Yelpcamp.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Yelpcamp.Models.CampgroundImages", b =>
+            modelBuilder.Entity("Yelpcamp.Models.CampgroundImage", b =>
                 {
-                    b.HasOne("Yelpcamp.Models.Campgrounds", null)
+                    b.HasOne("Yelpcamp.Models.Campground", null)
                         .WithMany("CampgroundImages")
-                        .HasForeignKey("CampgroundsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CampgroundId");
                 });
 
-            modelBuilder.Entity("Yelpcamp.Models.CampgroundReviews", b =>
+            modelBuilder.Entity("Yelpcamp.Models.CampgroundReview", b =>
                 {
-                    b.HasOne("Yelpcamp.Areas.Identity.Data.ApplicationUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
-                    b.HasOne("Yelpcamp.Models.Campgrounds", null)
+                    b.HasOne("Yelpcamp.Models.Campground", null)
                         .WithMany("CampgroundReviews")
-                        .HasForeignKey("CampgroundsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
+                        .HasForeignKey("CampgroundId");
                 });
 
-            modelBuilder.Entity("Yelpcamp.Models.Campgrounds", b =>
-                {
-                    b.HasOne("Yelpcamp.Areas.Identity.Data.ApplicationUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
-
-                    b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("Yelpcamp.Models.Campgrounds", b =>
+            modelBuilder.Entity("Yelpcamp.Models.Campground", b =>
                 {
                     b.Navigation("CampgroundImages");
 

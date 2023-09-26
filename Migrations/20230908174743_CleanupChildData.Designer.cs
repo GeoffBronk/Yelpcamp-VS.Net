@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Yelpcamp.Areas.Identity.Data;
 
@@ -11,9 +12,10 @@ using Yelpcamp.Areas.Identity.Data;
 namespace Yelpcamp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230908174743_CleanupChildData")]
+    partial class CleanupChildData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,7 +275,7 @@ namespace Yelpcamp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Campgrounds", (string)null);
+                    b.ToTable("Campgrounds");
                 });
 
             modelBuilder.Entity("Yelpcamp.Models.CampgroundImage", b =>
@@ -284,7 +286,7 @@ namespace Yelpcamp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CampgroundId")
+                    b.Property<int?>("CampgroundId")
                         .HasColumnType("int");
 
                     b.Property<string>("Filename")
@@ -299,7 +301,7 @@ namespace Yelpcamp.Migrations
 
                     b.HasIndex("CampgroundId");
 
-                    b.ToTable("CampgroundImages", (string)null);
+                    b.ToTable("CampgroundImages");
                 });
 
             modelBuilder.Entity("Yelpcamp.Models.CampgroundReview", b =>
@@ -324,7 +326,7 @@ namespace Yelpcamp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CampgroundId")
+                    b.Property<int?>("CampgroundId")
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
@@ -334,7 +336,7 @@ namespace Yelpcamp.Migrations
 
                     b.HasIndex("CampgroundId");
 
-                    b.ToTable("CampgroundReviews", (string)null);
+                    b.ToTable("CampgroundReviews");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -392,18 +394,14 @@ namespace Yelpcamp.Migrations
                 {
                     b.HasOne("Yelpcamp.Models.Campground", null)
                         .WithMany("CampgroundImages")
-                        .HasForeignKey("CampgroundId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CampgroundId");
                 });
 
             modelBuilder.Entity("Yelpcamp.Models.CampgroundReview", b =>
                 {
                     b.HasOne("Yelpcamp.Models.Campground", null)
                         .WithMany("CampgroundReviews")
-                        .HasForeignKey("CampgroundId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CampgroundId");
                 });
 
             modelBuilder.Entity("Yelpcamp.Models.Campground", b =>

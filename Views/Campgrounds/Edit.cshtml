@@ -1,0 +1,46 @@
+﻿@model Yelpcamp.ViewModels.CampgroundViewModel
+@{
+    ViewBag.Title = "Edit Campground";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <h1 class="text-center">Edit Campground</h1>
+    <div class="col-md-6 offset-md-3">
+        <form asp-controller="Campgrounds" asp-action="Update" method="POST">
+            @Html.ValidationSummary()
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Title)
+                @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Title)
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Description)
+                @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Description)
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Location)
+                @Html.TextBoxFor(m => m.Location, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Location)
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Price)
+                @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Price)
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Geometry)
+                @Html.TextBoxFor(m => m.Geometry, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Geometry)
+            </div>
+            @Html.HiddenFor(m => m.Id)
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
