@@ -7,7 +7,7 @@
 <div class="row">
     <h1 class="text-center">Edit Campground</h1>
     <div class="col-md-6 offset-md-3">
-        <form asp-controller="Campgrounds" asp-action="Update" method="POST">
+        <form asp-controller="Campgrounds" asp-action="Update" method="POST" enctype="multipart/form-data">
             @Html.ValidationSummary()
             <div class="form-group mb-3">
                 @Html.LabelFor(m => m.Title)
@@ -30,9 +30,24 @@
                 @Html.ValidationMessageFor(m => m.Price)
             </div>
             <div class="form-group mb-3">
-                @Html.LabelFor(m => m.Geometry)
-                @Html.TextBoxFor(m => m.Geometry, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Geometry)
+                <label for="CampImages" class="custom-file-upload">
+                    Add Campground Images
+                </label>
+                <input type="file" name="CampImages" id="CampImages" class="form-control" accept="image/*" multiple />
+            </div>
+            <div class="mb-3">
+                @if (Model.CampgroundImages != null) {
+                    int i = 1;
+                    @foreach (var image in Model.CampgroundImages)
+                    {
+                        <img src="@image.URL.Replace("upload", "/upload/w_200")" class="img-thumbnail" alt="">
+                        <div class="form-check-inline">
+                            <!-- deleteImges[] below adds each checked item into an array for use later -->
+                            <input type="checkbox" id="image-@i" name="deleteImages[]" value="@image.Id">
+                        </div>
+                        <label for="image-@i">Delete?</label>
+                    }
+                }
             </div>
             @Html.HiddenFor(m => m.Id)
             @Html.AntiForgeryToken()

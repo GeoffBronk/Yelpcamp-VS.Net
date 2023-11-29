@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Nodes;
+using Yelpcamp.Models;
 
 namespace Yelpcamp.ViewModels
 {
@@ -16,9 +19,7 @@ namespace Yelpcamp.ViewModels
         public string? Location { get; set; }
         [Required]
         public float Price { get; set; }
-        [MaxLength(256)]
-        public string? Geometry { get; set; }
-        public string? Image { get; set; }
+        public JToken? Geometry { get; set; }
         [MaxLength(450)]//string @ 450 matches Identity User ID DB definition
         public string? AuthorUserId { get; set; }
         [MaxLength(256)]

@@ -7,7 +7,7 @@
 <div class="row">
     <h1 class="text-center">Add New Campground</h1>
     <div class="col-md-6 offset-md-3">
-        <form asp-controller="Campgrounds" asp-action="Create" method="POST"> @* enctype="multipart/form-data"> *@
+        <form asp-controller="Campgrounds" asp-action="Create" method="POST" enctype="multipart/form-data">
             @Html.ValidationSummary()
             <div class="form-group mb-3">
                 @Html.LabelFor(m => m.Title)
@@ -30,13 +30,10 @@
                 @Html.ValidationMessageFor(m => m.Price)
             </div>
             <div class="form-group mb-3">
-                @* <label for="MainImage" class="custom-file-upload">
-                    Primary Campground Image (Main Entrance or Pay Booth)
+                <label for="MainImage" class="custom-file-upload">
+                    Primary Campground Image (Main Entrance or Pay Station)
                 </label>
-                <input type="file" name="MainImage" id="MainImage" class="form-control" accept="image/*" /> *@
-                @Html.LabelFor(m => m.Image)
-                @Html.TextBoxFor(m => m.Image, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Image)
+                <input type="file" name="MainImage" id="MainImage" class="form-control" accept="image/*" />
             </div>
             @Html.AntiForgeryToken()
             <button type="submit" class="btn btn-primary">Save</button>
