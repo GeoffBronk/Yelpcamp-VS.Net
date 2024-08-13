@@ -14,8 +14,8 @@ namespace Yelpcamp.Models
         [MaxLength(256)]
         public string? Location { get; set; }
         public float Price { get; set; }
-        //public double? GeometryXCoord { get; set; }
-        //public double? GeometryYCoord { get; set; }
+        public double? GeometryXCoord { get; set; }
+        public double? GeometryYCoord { get; set; }
         [MaxLength(256)]
         public string? Geometry { get; set; }
         [MaxLength(450)]//string @ 450 matches Identity User ID DB definition

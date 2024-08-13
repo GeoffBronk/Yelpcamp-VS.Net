@@ -5,13 +5,12 @@ using Yelpcamp.Areas.Identity.Data;
 using Yelpcamp.Models;
 using Yelpcamp.ViewModels;
 using System.Security.Claims;
+using dotenv.net;
+using Newtonsoft.Json.Linq;
 // Import packages for Cloudinary (via Cloudinary .Net Quick start guide)
 //==============================
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using dotenv.net;
-using System.Text.Json.Nodes;
-using Newtonsoft.Json.Linq;
 
 namespace Yelpcamp.Controllers
 {
@@ -19,7 +18,7 @@ namespace Yelpcamp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly Cloudinary cloudinary;
-        private readonly String mapboxApiKey;
+        private readonly string mapboxApiKey;
         public CampgroundsController(ApplicationDbContext context)
         {
             _context = context;
@@ -87,6 +86,17 @@ namespace Yelpcamp.Controllers
                 System.IO.File.Delete(filePath);
             }
 
+            Campground newCampground = new Campground
+            {
+                Id = campground.Id,
+                Title = campground.Title,
+                Description = campground.Description,
+                Location = campground.Location,
+                Price = campground.Price,
+                AuthorUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                AuthorUserName = User.FindFirst(ClaimTypes.Name).Value
+            };
+
             //use MapBox API to get GeoCoded Coordinates for the location
             HttpClient client = new HttpClient();
             HttpResponseMessage response = await client.GetAsync("https://api.mapbox.com/geocoding/v5/mapbox.places/"
@@ -94,16 +104,12 @@ namespace Yelpcamp.Controllers
                                                                     + ".json?access_token=" + mapboxApiKey);
             JObject? jsonObject = JObject.Parse(await response.Content.ReadAsStringAsync());
 
-            Campground newCampground = new Campground{
-                Id = campground.Id,
-                Title = campground.Title,
-                Description = campground.Description,
-                Location = campground.Location,
-                Price = campground.Price,
-                Geometry = (string)jsonObject["Geometry"],
-                AuthorUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value,
-                AuthorUserName = User.FindFirst(ClaimTypes.Name).Value
-            };
+            if(jsonObject["features"][0]["center"] !=  null)
+            {
+                newCampground.Geometry = (string)jsonObject["features"][0]["Geometry"];
+                newCampground.GeometryXCoord = (double)jsonObject["features"][0]["center"][0];
+                newCampground.GeometryYCoord = (double)jsonObject["features"][0]["center"][1];
+            }
 
             if (campgroundImage.AppPublicId != null)
                 newCampground.CampgroundImages = new List<CampgroundImage> { campgroundImage };
@@ -141,6 +147,8 @@ namespace Yelpcamp.Controllers
                 Location = campgroundInDb.Location,
                 Price = campgroundInDb.Price,
                 Geometry = campgroundInDb.Geometry,
+                GeometryXCoord = campgroundInDb.GeometryXCoord,
+                GeometryYCoord = campgroundInDb.GeometryYCoord,
                 AuthorUserId = campgroundInDb.AuthorUserId,
                 AuthorUserName = campgroundInDb.AuthorUserName,
             };
@@ -209,6 +217,8 @@ namespace Yelpcamp.Controllers
                 Location = campground.Location,
                 Price = campground.Price,
                 Geometry = campground.Geometry,
+                GeometryXCoord = campground.GeometryXCoord,
+                GeometryYCoord = campground.GeometryYCoord,
                 AuthorUserId = campground.AuthorUserId,
                 AuthorUserName = campground.AuthorUserName
             };
@@ -261,7 +271,9 @@ namespace Yelpcamp.Controllers
                 //response.EnsureSuccessStatusCode();
                 JObject? jsonObject = JObject.Parse(await response.Content.ReadAsStringAsync());
 
-                campInDb.Geometry = (string)jsonObject["Geometry"];
+                campInDb.Geometry = (string)jsonObject["features"][0]["Geometry"];
+                campInDb.GeometryXCoord = (double)jsonObject["features"][0]["center"][0];
+                campInDb.GeometryYCoord = (double)jsonObject["features"][0]["center"][1];
                 campInDb.Location = campEditData.Location;
             }
             campInDb.Price = campEditData.Price;

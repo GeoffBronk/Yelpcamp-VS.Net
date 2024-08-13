@@ -7,9 +7,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
-<script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
-
 <div id="cluster-map"></div>
 <h1>All Campgrounds</h1>
 
@@ -43,13 +40,12 @@
 @section Scripts{
     @{
         DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
-        //var MAPBOX_TOKEN = Environment.GetEnvironmentVariable("MAPBOX_TOKEN");
-        var campgroundJson = Json.Serialize(Model);
-        //Console.Write(campgroundJson);
+        //var campgroundJson = Json.Serialize(Model);
     }
+
     <script>
-        const mapToken = process.env.MAPBOX_TOKEN
-        const campgrounds = @campgroundJson
+        const mapToken = "@Environment.GetEnvironmentVariable("MAPBOX_TOKEN")";
+        const campgrounds = { features: JSON.stringify({})}
     </script>
     <script src="/js/clusterMap.js"></script>
 }

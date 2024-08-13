@@ -1,11 +1,13 @@
 ﻿@model Yelpcamp.ViewModels.CampgroundViewModel
 @using Microsoft.AspNetCore.Identity
 @using Yelpcamp.ViewModels
+@using dotenv.net;
 @inject UserManager<Yelpcamp.Areas.Identity.Data.ApplicationUser> userManager
 @{
     ViewBag.Title = "Details - " + Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link rel="stylesheet" href="/css/stars.css">
 <div class="row">
     <div class="col-6">
         <div id="imageCarousel" class="carousel slide" data-ride="carousel">
@@ -71,8 +73,21 @@
             <h2>Leave a Review</h2>
             <form asp-controller="CampgroundReviews" asp-action="Create" asp-route-id="@Model.Id" method="post" class="mb-3">
                 <div class="mb-3">
-                    <label class="form-label" for="rating">Rating</label>
-                    <input class="form-control" type="number" name="campgroundReview[rating]" id="rating" cols="5" required></input>
+@*                     <label class="form-label" for="rating">Rating</label>
+                    <input class="form-control" type="number" name="campgroundReview[rating]" id="rating" cols="5" required></input> *@
+                    <fieldset class="starability-basic">
+                        <input type="radio" id="no-rate" class="input-no-rate" name="campgroundReview[rating]" value="0" checked aria-label="No rating." />
+                        <input type="radio" id="first-rate1" name="campgroundReview[rating]" value="1" />
+                        <label for="first-rate1" title="Terrible">1 star</label>
+                        <input type="radio" id="first-rate2" name="campgroundReview[rating]" value="2" />
+                        <label for="first-rate2" title="Not good">2 stars</label>
+                        <input type="radio" id="first-rate3" name="campgroundReview[rating]" value="3" />
+                        <label for="first-rate3" title="Average">3 stars</label>
+                        <input type="radio" id="first-rate4" name="campgroundReview[rating]" value="4" />
+                        <label for="first-rate4" title="Very good">4 stars</label>
+                        <input type="radio" id="first-rate5" name="campgroundReview[rating]" value="5" />
+                        <label for="first-rate5" title="Amazing">5 stars</label>
+                    </fieldset>
                     <div class="valid-feedback">
                         Looks good!
                     </div>
@@ -98,7 +113,10 @@
                 <div class="card mb-3 ">
                     <div class="card-body">
                         <h5 class="card-title">@review.AuthorUserName</h5>
-                        <p> Rated: @review.Rating.ToString() stars</p>
+                        @*<p> Rated: @review.Rating.ToString() stars</p> *@
+                         <p class="starability-result" data-rating="@review.Rating">
+                            Rated: <%= @review.Rating.ToString() %> stars
+                        </p>
                         <!-- <h6 class="card-subtitle mb-2 text-muted"></h6> -->
                         <p class="card-text">@review.Body</p>
                         @if (userManager.GetUserId(User) == review.AuthorUserId)
@@ -115,6 +133,15 @@
 </div>
 
 @section Scripts{
+    @{
+        DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
+    }
+    <script>
+        const mapToken = "@Environment.GetEnvironmentVariable("MAPBOX_TOKEN")";  //MAPBOX_TOKEN;
+        const campgroundCoords = [@Model.GeometryXCoord, @Model.GeometryYCoord];
+        const campTitle = "@Model.Title";
+        const campLocation = "@Model.Location";
+    </script>
     <partial name="_ValidationScriptsPartial" />
-    <script src='/scripts/showMap.js'></script>
+    <script src='/js/showMap.js'></script>
 }

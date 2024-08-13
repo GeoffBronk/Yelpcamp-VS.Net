@@ -19,7 +19,10 @@ namespace Yelpcamp.ViewModels
         public string? Location { get; set; }
         [Required]
         public float Price { get; set; }
-        public JToken? Geometry { get; set; }
+        public double? GeometryXCoord { get; set; }
+        public double? GeometryYCoord { get; set; }
+        [MaxLength(256)]
+        public string? Geometry { get; set; }
         [MaxLength(450)]//string @ 450 matches Identity User ID DB definition
         public string? AuthorUserId { get; set; }
         [MaxLength(256)]
